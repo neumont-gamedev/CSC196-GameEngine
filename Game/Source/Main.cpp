@@ -5,6 +5,7 @@
 #include "Random.h"
 #include "ETime.h"
 
+#include <fmod.hpp>
 #include <SDL.h>
 #include <iostream>
 #include <cstdlib>
@@ -22,6 +23,26 @@ int main(int argc, char* argv[])
 
 	Time time;
 
+	// create audio system
+	FMOD::System* audio;
+	FMOD::System_Create(&audio);
+
+	void* extradriverdata = nullptr;
+	audio->init(32, FMOD_INIT_NORMAL, extradriverdata);
+
+
+	FMOD::Sound* sound = nullptr;
+	audio->createSound("test.wav", FMOD_DEFAULT, 0, &sound);
+	audio->playSound(sound, 0, false, nullptr);
+
+	std::vector<FMOD::Sound*> sounds;
+	audio->createSound("bass.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+
+	audio->createSound("snare.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+
+
 	std::vector<Particle> particles;
 	//for (int i = 0; i < 100; i++)
 	//{
@@ -32,6 +53,8 @@ int main(int argc, char* argv[])
 	bool quit = false;
 	while (!quit)
 	{
+		audio->update();
+
 		time.Tick();
 		//std::cout << time.GetTime() << std::endl;
 
@@ -42,6 +65,8 @@ int main(int argc, char* argv[])
 			quit = true;
 		}
 
+		
+
 		// UPDATE
 		Vector2 mousePosition = input.GetMousePosition();
 		if (input.GetMouseButtonDown(0))
@@ -49,13 +74,21 @@ int main(int argc, char* argv[])
 			particles.push_back(Particle{ mousePosition, { randomf(-100, 100), randomf(-100, 100) } });
 		}
 
-
 		for (Particle& particle : particles)
 		{
 			particle.Update(time.GetDeltaTime());
 
 			if (particle.position.x > 800) particle.position.x = 0;
 			if (particle.position.x < 0) particle.position.x = 800;
+		}
+
+		if (input.GetKeyDown(SDL_SCANCODE_Q) && !input.GetPreviousKeyDown(SDL_SCANCODE_Q))
+		{
+			audio->playSound(sounds[0], 0, false, nullptr);
+		}
+		if (input.GetKeyDown(SDL_SCANCODE_W) && !input.GetPreviousKeyDown(SDL_SCANCODE_W))
+		{
+			audio->playSound(sounds[1], 0, false, nullptr);
 		}
 
 		// DRAW
