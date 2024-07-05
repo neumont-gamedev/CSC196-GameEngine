@@ -44,10 +44,7 @@ int main(int argc, char* argv[])
 
 
 	std::vector<Particle> particles;
-	//for (int i = 0; i < 100; i++)
-	//{
-	//	particles.push_back(Particle{ { rand() % 800, rand() % 800 }, { randomf(100, 300), 0.0f }});
-	//}
+
 
 	// main loop
 	bool quit = false;
@@ -69,9 +66,12 @@ int main(int argc, char* argv[])
 
 		// UPDATE
 		Vector2 mousePosition = input.GetMousePosition();
-		if (input.GetMouseButtonDown(0))
+		if (input.GetMouseButtonDown(0) && !input.GetPreviousMouseButtonDown(0))
 		{
-			particles.push_back(Particle{ mousePosition, { randomf(-100, 100), randomf(-100, 100) } });
+			for (int i = 0; i < 300; i++)
+			{
+				particles.push_back(Particle{ mousePosition, { randomf(-100, 100), randomf(-100, 100) }, randomf(1, 3), (uint8_t)random(255), (uint8_t)random(255), (uint8_t)random(255), 0 });
+			}		
 		}
 
 		for (Particle& particle : particles)
