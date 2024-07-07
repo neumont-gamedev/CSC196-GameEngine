@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Color.h" />
     <ClInclude Include="Source\ETime.h" />
     <ClInclude Include="Source\Input.h" />
     <ClInclude Include="Source\Particle.h" />
