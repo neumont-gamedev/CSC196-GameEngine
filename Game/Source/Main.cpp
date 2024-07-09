@@ -5,6 +5,7 @@
 #include "Random.h"
 #include "ETime.h"
 #include "MathUtils.h"
+#include "Model.h"
 
 #include <fmod.hpp>
 #include <SDL.h>
@@ -24,15 +25,56 @@ int main(int argc, char* argv[])
 
 	Time time;
 
+	// create audio system
+	FMOD::System* audio;
+	FMOD::System_Create(&audio);
+
+	void* extradriverdata = nullptr;
+	audio->init(32, FMOD_INIT_NORMAL, extradriverdata);
+
+
+	FMOD::Sound* sound = nullptr;
+	audio->createSound("test.wav", FMOD_DEFAULT, 0, &sound);
+	audio->playSound(sound, 0, false, nullptr);
+
+	std::vector<FMOD::Sound*> sounds;
+	audio->createSound("bass.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+
+	audio->createSound("snare.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+
+	audio->createSound("close-hat.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+
+	audio->createSound("open-hat.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+
+	audio->createSound("clap.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+
+	audio->createSound("cowbell.wav", FMOD_DEFAULT, 0, &sound);
+	sounds.push_back(sound);
+
 	std::vector<Particle> particles;
 	float offset = 0;
+
+
+	std::vector<Vector2> points;
+	points.push_back(Vector2{ -5, 5 });
+	points.push_back(Vector2{ 0, -5 });
+	points.push_back(Vector2{ 5, 5 });
+	points.push_back(Vector2{ -5, 5 });
+	Model model{ points, Color{ 1, 1, 1, 0 } };
+	Vector2 position{ 400, 300 };
+	float rotation = 0;
+
 
 	// main loop
 	bool quit = false;
 	while (!quit)
 	{
 		time.Tick();
-		//std::cout << time.GetTime() << std::endl;
 
 		// INPUT
 		input.Update();
@@ -40,7 +82,18 @@ int main(int argc, char* argv[])
 		{
 			quit = true;
 		}
-		
+
+		Vector2 velocity{ 0, 0 };
+		if (input.GetKeyDown(SDL_SCANCODE_UP))		velocity.y = -100;
+		if (input.GetKeyDown(SDL_SCANCODE_DOWN))	velocity.y = 100;
+
+		if (input.GetKeyDown(SDL_SCANCODE_LEFT))	velocity.x = -100;
+		if (input.GetKeyDown(SDL_SCANCODE_RIGHT))	velocity.x = 100;
+
+		position = position + velocity * time.GetDeltaTime();
+		rotation = velocity.Angle();//rotation + time.GetDeltaTime();
+
+
 		// UPDATE
 		Vector2 mousePosition = input.GetMousePosition();
 		if (input.GetMouseButtonDown(0) && !input.GetPreviousMouseButtonDown(0))
@@ -59,6 +112,14 @@ int main(int argc, char* argv[])
 			if (particle.position.x < 0) particle.position.x = 800;
 		}
 
+		// DRUM MACHINE
+		if (input.GetKeyDown(SDL_SCANCODE_E) && !input.GetPreviousKeyDown(SDL_SCANCODE_E)) audio->playSound(sounds[2], 0, false, nullptr);
+		if (input.GetKeyDown(SDL_SCANCODE_R) && !input.GetPreviousKeyDown(SDL_SCANCODE_R)) audio->playSound(sounds[3], 0, false, nullptr);
+		if (input.GetKeyDown(SDL_SCANCODE_T) && !input.GetPreviousKeyDown(SDL_SCANCODE_T)) audio->playSound(sounds[4], 0, false, nullptr);
+		if (input.GetKeyDown(SDL_SCANCODE_Y) && !input.GetPreviousKeyDown(SDL_SCANCODE_Y)) audio->playSound(sounds[5], 0, false, nullptr);
+		if (input.GetKeyDown(SDL_SCANCODE_Q) && !input.GetPreviousKeyDown(SDL_SCANCODE_Q)) audio->playSound(sounds[0], 0, false, nullptr);
+		if (input.GetKeyDown(SDL_SCANCODE_W) && !input.GetPreviousKeyDown(SDL_SCANCODE_W)) audio->playSound(sounds[1], 0, false, nullptr);
+
 		// DRAW
 		// clear screen
 		renderer.SetColor(0, 0, 0, 0);
@@ -69,10 +130,10 @@ int main(int argc, char* argv[])
 		offset += (90 * time.GetDeltaTime());
 		for (float angle = 0; angle < 360; angle += 360 / 60)
 		{
-			//float x = Math::Cos(Math::DegToRad(angle + offset)) * Math::Sin((offset + angle) * 0.01f) * (radius + angle * 0.2f);
-			//float y = Math::Sin(Math::DegToRad(angle + offset)) * Math::Cos((offset + angle) * 0.01f) * (radius + angle * 0.2f);
-			float x = Math::Cos(Math::DegToRad(angle + offset)) * (radius + angle);
-			float y = Math::Sin(Math::DegToRad(angle + offset)) * (radius + angle);
+			float x = Math::Cos(Math::DegToRad(angle + offset)) * Math::Sin((offset + angle) * 0.1f) * (radius + angle * 0.2f);
+			float y = Math::Sin(Math::DegToRad(angle + offset)) * Math::Cos((offset + angle) * 0.1f) * (radius + angle * 0.2f);
+			//float x = Math::Cos(Math::DegToRad(angle + offset)) * (radius + angle);
+			//float y = Math::Sin(Math::DegToRad(angle + offset)) * (radius + angle);
 
 			renderer.SetColor(random(256), random(256), random(256), 0);
 			renderer.DrawRect(400 + x, 300 + y, 10.0f, 10.0f);
@@ -85,6 +146,10 @@ int main(int argc, char* argv[])
 			particle.Draw(renderer);
 		}
 		
+		renderer.SetColor(255, 255, 255, 0);
+		model.Draw(renderer, position, rotation, 5);
+
+
 		// show screen
 		renderer.EndFrame();
 	}
