@@ -1,6 +1,5 @@
 #include "Engine.h"
 
-Engine Engine::ms_engine;
 Engine g_engine;
 
 bool Engine::Initialize()

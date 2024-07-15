@@ -11,6 +11,9 @@
 #include "MathUtils.h"
 
 #include "Particle.h"
+#include "Text.h"
+#include "Font.h"
+
 #include "Model.h"
 #include "Transform.h"
 
@@ -30,16 +33,14 @@ public:
 
 	void Update();
 
-	Renderer* GetRenderer() { return m_renderer; }
-	Input* GetInput() { return m_input; }
-	Audio* GetAudio() { return m_audio; }
+	Renderer& GetRenderer() { return *m_renderer; }
+	Input& GetInput() { return *m_input; }
+	Audio& GetAudio() { return *m_audio; }
 
 public:
 	Renderer* m_renderer{ nullptr };
 	Input* m_input{ nullptr };
 	Audio* m_audio{ nullptr };
-
-	static Engine ms_engine;
 };
 
 extern Engine g_engine;
