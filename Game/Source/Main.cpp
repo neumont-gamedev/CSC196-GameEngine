@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "Scene.h"
 
 #include <iostream>
@@ -23,19 +24,16 @@ int main(int argc, char* argv[])
 
 	// actor
 	Model* model = new Model{ points, Color{ 1, 0, 0 } };
-
-
-
 	Scene* scene = new Scene();
 
-	for (int i = 0; i < 100; i++)
-	{
-		Transform transform{ Vector2{ randomf(0, 800), randomf(0, 600) }, 0, randomf(1, 5) };
-		Player* player = new Player(randomf(100, 200), transform, model);
-		player->SetDamping(2.0f);
-		scene->AddActor(player);
-	}
+	Transform transform{ Vector2{ 400, 300 }, 0, 3 };
+	Player* player = new Player(800, transform, model);
+	player->SetDamping(2.0f);
+	scene->AddActor(player);
 
+	auto* enemyModel = new Model{ points, Color{ 1, 0, 1 } };
+	auto* enemy = new Enemy(800, Transform{ { 300, 300 }, 0, 2 }, enemyModel);
+	scene->AddActor(enemy);
 
 	// main loop
 	bool quit = false;
