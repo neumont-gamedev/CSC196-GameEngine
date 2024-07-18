@@ -48,7 +48,6 @@
     <ClCompile Include="Source\Particle.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
-    <ClCompile Include="Source\Scenecpp.cpp" />
     <ClCompile Include="Source\Text.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

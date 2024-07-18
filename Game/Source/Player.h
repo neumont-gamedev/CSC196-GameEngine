@@ -14,9 +14,8 @@ public:
 		m_speed{ speed }
 	{}
 
-
-
 	void Update(float dt);
+	virtual void OnCollision(Actor* actor);
 
 private:
 	float m_speed = 0;

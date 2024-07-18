@@ -14,3 +14,12 @@ void Enemy::Update(float dt)
 
 	Actor::Update(dt);
 }
+
+void Enemy::OnCollision(Actor* actor)
+{
+	if (actor->GetTag() == "Player" || actor->GetTag() == "PlayerBullet")
+	{
+		m_destroyed = true;
+	}
+
+}

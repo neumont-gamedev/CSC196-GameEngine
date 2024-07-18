@@ -29,11 +29,18 @@ int main(int argc, char* argv[])
 	Transform transform{ Vector2{ 400, 300 }, 0, 3 };
 	Player* player = new Player(800, transform, model);
 	player->SetDamping(2.0f);
+	player->SetTag("Player");
 	scene->AddActor(player);
 
 	auto* enemyModel = new Model{ points, Color{ 1, 0, 1 } };
-	auto* enemy = new Enemy(800, Transform{ { 300, 300 }, 0, 2 }, enemyModel);
+	auto* enemy = new Enemy(400, Transform{ { g_engine.GetRenderer().GetWidth(),  g_engine.GetRenderer().GetHeight() }, 0, 2}, enemyModel);
+	enemy->SetDamping(1.0f);
+	enemy->SetTag("Enemy");
 	scene->AddActor(enemy);
+
+
+	float spawnTimer = 2;
+
 
 	// main loop
 	bool quit = false;
