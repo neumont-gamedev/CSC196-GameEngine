@@ -34,10 +34,18 @@ public:
 	void Update();
 
 	Renderer& GetRenderer() { return *m_renderer; }
-	Input& GetInput() { return *m_input; }
-	Audio& GetAudio() { return *m_audio; }
+	Input& GetInput()		{ return *m_input; }
+	Audio& GetAudio()		{ return *m_audio; }
 
-public:
+	Time& GetTime()			{ return *m_time;  }
+
+	bool IsQuit() { return quit; }
+
+private:
+	bool quit{ false };
+
+	Time* m_time{ nullptr };
+
 	Renderer* m_renderer{ nullptr };
 	Input* m_input{ nullptr };
 	Audio* m_audio{ nullptr };

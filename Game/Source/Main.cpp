@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Scene.h"
+#include "GameData.h"
+#include "SpaceGame.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -11,19 +13,31 @@ int main(int argc, char* argv[])
 {
 	g_engine.Initialize();
 
-	Time time;
+	SpaceGame* game = new SpaceGame(&g_engine);
+	game->Initialize();
 
+	while (!g_engine.IsQuit())
+	{
+		g_engine.Update();
+		game->Update(g_engine.GetTime().GetDeltaTime());
+
+		g_engine.GetRenderer().SetColor(0, 0, 0, 0);
+		g_engine.GetRenderer().BeginFrame();
+
+		game->Draw(g_engine.GetRenderer());
+
+		g_engine.GetRenderer().EndFrame();
+	}
+
+	return 0;
+}
+
+/*
 	std::vector<Particle> particles;
 	float offset = 0;
 
-	std::vector<Vector2> points;
-	points.push_back(Vector2{ 5, 0 });
-	points.push_back(Vector2{ -5, -5 });
-	points.push_back(Vector2{ -5, 5 });
-	points.push_back(Vector2{ 5, 0 });
-
 	// actor
-	Model* model = new Model{ points, Color{ 1, 0, 0 } };
+	Model* model = new Model{ GameData::shipPoints, Color{ 1, 0, 0 } };
 	Scene* scene = new Scene();
 
 	Transform transform{ Vector2{ 400, 300 }, 0, 3 };
@@ -32,7 +46,7 @@ int main(int argc, char* argv[])
 	player->SetTag("Player");
 	scene->AddActor(player);
 
-	auto* enemyModel = new Model{ points, Color{ 1, 0, 1 } };
+	auto* enemyModel = new Model{ GameData::shipPoints, Color{ 1, 0, 1 } };
 	auto* enemy = new Enemy(400, Transform{ { g_engine.GetRenderer().GetWidth(),  g_engine.GetRenderer().GetHeight() }, 0, 2}, enemyModel);
 	enemy->SetDamping(1.0f);
 	enemy->SetTag("Enemy");
@@ -43,20 +57,12 @@ int main(int argc, char* argv[])
 
 
 	// main loop
-	bool quit = false;
-	while (!quit)
+	while (!g_engine.IsQuit())
 	{
-		time.Tick();
-
-		// INPUT
-		g_engine.GetInput().Update();
-		if (g_engine.GetInput().GetKeyDown(SDL_SCANCODE_ESCAPE))
-		{
-			quit = true;
-		}
+		g_engine.Update();
 
 		// UPDATE
-		scene->Update(time.GetDeltaTime());
+		scene->Update(g_engine.GetTime().GetDeltaTime());
 
 
 		Vector2 mousePosition = g_engine.GetInput().GetMousePosition();
@@ -70,7 +76,7 @@ int main(int argc, char* argv[])
 
 		for (Particle& particle : particles)
 		{
-			particle.Update(time.GetDeltaTime());
+			particle.Update(g_engine.GetTime().GetDeltaTime());
 
 			if (particle.position.x > 800) particle.position.x = 0;
 			if (particle.position.x < 0) particle.position.x = 800;
@@ -92,7 +98,7 @@ int main(int argc, char* argv[])
 
 		g_engine.GetRenderer().SetColor(255, 255, 255, 0);
 		float radius = 5;
-		offset += (90 * time.GetDeltaTime());
+		offset += (90 * g_engine.GetTime().GetDeltaTime());
 		for (float angle = 0; angle < 360; angle += 360 / 60)
 		{
 			float x = Math::Cos(Math::DegToRad(angle + offset)) * Math::Sin((offset + angle) * 0.1f) * (radius + angle * 0.2f);
@@ -121,3 +127,4 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+*/
