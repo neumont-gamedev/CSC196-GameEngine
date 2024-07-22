@@ -32,7 +32,7 @@ void Scene::Update(float dt)
 	{
 		for (Actor* actor2 : m_actors)
 		{
-			if (actor1 == actor2) continue;
+			if (actor1 == actor2 || (actor1->m_destroyed || actor2->m_destroyed)) continue;
 
 			Vector2 direction = actor1->GetTransform().position - actor2->GetTransform().position;
 			float distance = direction.Length();
@@ -60,4 +60,9 @@ void Scene::AddActor(Actor* actor)
 {
 	actor->m_scene = this;
 	m_actors.push_back(actor);
+}
+
+void Scene::RemoveAll()
+{
+	m_actors.clear();
 }
