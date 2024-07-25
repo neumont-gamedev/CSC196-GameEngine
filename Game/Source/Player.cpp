@@ -40,10 +40,10 @@ void Player::Update(float dt)
 		Model* model = new Model{ GameData::bulletPoints, Color{ 1, 1, 0 } };
 		Transform transform{ m_transform.position, angle, 1.0f };
 
-		Bullet* bullet = new Bullet(400.0f, transform, model);
+		auto bullet = std::make_unique<Bullet>(400.0f, transform, model);
 		bullet->SetLifespan(1);
 		bullet->SetTag("PlayerBullet");
-		m_scene->AddActor(bullet);
+		m_scene->AddActor(std::move(bullet));
 	}
 
 
